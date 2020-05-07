@@ -1,6 +1,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Domain.Entities.People;
+using Infrastructure.Proxies.People.Requests;
 using Infrastructure.Repositories.People;
 using MediatR;
 

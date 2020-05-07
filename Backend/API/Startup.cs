@@ -1,5 +1,8 @@
+using Infrastructure.Extensions;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -18,24 +21,32 @@ namespace API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers();
+            services.AddHealthChecks();
+            services.AddOptions();
+            services.AddCorsSupport(Configuration);
+            services.AddMvcServices();
+            services.AddSwaggerInterface();
+            services.AddHttpContextAccessor();
+            services.AddHttpClient();
+            services.AddDomainEvents();
+            services.AddInfrastructure();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IApiVersionDescriptionProvider apiVersionDescriptionProvider)
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
-
+            app.UseEnvironment(env);
+            app.UseHealthChecks("/health/live", new HealthCheckOptions());
+            app.UseHealthChecks("/health/ready", new HealthCheckOptions());
+            app.UseCors();
+            app.UseAuthentication();
+            app.UseSwaggerInterface(Configuration, apiVersionDescriptionProvider);
+            app.UseStaticFiles();
+            app.UseMvcServices();
             app.UseHttpsRedirection();
-
             app.UseRouting();
-
             app.UseAuthorization();
-
-            app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
+            app.UseDomainEvents();
         }
     }
 }

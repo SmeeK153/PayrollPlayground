@@ -2,7 +2,7 @@ using Domain.Entities.People;
 using Domain.ValueObjects;
 using MediatR;
 
-namespace Infrastructure.Proxies.People
+namespace Infrastructure.Proxies.People.Requests
 {
     public class GetPerson : IRequest<Person>
     {

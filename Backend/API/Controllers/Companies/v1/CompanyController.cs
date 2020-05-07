@@ -9,7 +9,7 @@ using API.Extensions;
 using Domain.ValueObjects;
 using Infrastructure.Proxies;
 using Infrastructure.Proxies.Companies.Requests;
-using Infrastructure.Proxies.People;
+using Infrastructure.Proxies.People.Requests;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers.Companies.v1
@@ -85,14 +85,14 @@ namespace API.Controllers.Companies.v1
         /// <summary>
         /// Associates an employee with a company
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="companyId"></param>
         /// <param name="request"></param>
         /// <returns></returns>
-        [HttpPatch("{id}")]
+        [HttpPost("{companyId}/employees")]
         [Produces(MediaTypeNames.Application.Json)]
-        public async Task<ActionResult<EmployeeDetail>> AddEmployeeToCompany(Guid id, AddEmployeeToCompanyRequest request)
+        public async Task<ActionResult<EmployeeDetail>> AddEmployeeToCompany(Guid companyId, AddEmployeeToCompanyRequest request)
         {
-            var company = await _requestService.Execute(new GetCompany {Id = id});
+            var company = await _requestService.Execute(new GetCompany {Id = companyId});
             var person = await _requestService.Execute(new GetPerson
             {
                 TaxIdentificationNumber = request.TaxIdentificationNumber,
@@ -109,7 +109,7 @@ namespace API.Controllers.Companies.v1
         /// <param name="companyId"></param>
         /// <param name="employeeId"></param>
         /// <returns></returns>
-        [HttpGet("companyId/employees/{employeeId}")]
+        [HttpGet("{companyId}/employees/{employeeId}")]
         [Produces(MediaTypeNames.Application.Json)]
         public async Task<ActionResult<EmployeeDetail>> LookupEmployeeAtCompany(Guid companyId, Guid employeeId)
         {
