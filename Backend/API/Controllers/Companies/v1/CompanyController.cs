@@ -32,7 +32,12 @@ namespace API.Controllers.Companies.v1
         [Produces(MediaTypeNames.Application.Json)]
         public async Task<ActionResult<IEnumerable<CompanySummary>>> GetCompanies()
         {
-            var companies = await _requestService.Execute(new GetAllCompanies());
+            var result = await _requestService.Execute(new GetAllCompanies());
+            var companies = result.ToList();
+            if (!companies.Any())
+            {
+                return NoContent();
+            }
             var companySummaries = companies.Select(company => company.ToSummary());
             return Ok(companySummaries);
         }
@@ -47,6 +52,10 @@ namespace API.Controllers.Companies.v1
         public async Task<ActionResult<CompanyDetail>> GetCompany(Guid id)
         {
             var company = await _requestService.Execute(new GetCompany {Id = id});
+            if (company is null)
+            {
+                return NotFound();
+            }
             var companyDetails = company.ToDetail();
             return Ok(companyDetails);
         }
@@ -78,6 +87,10 @@ namespace API.Controllers.Companies.v1
         public async Task<ActionResult> DeleteCompany(Guid id)
         {
             var company = await _requestService.Execute(new GetCompany {Id = id});
+            if (company is null)
+            {
+                return NotFound();
+            }
             company.CloseCompany();
             return NoContent();
         }
@@ -93,7 +106,11 @@ namespace API.Controllers.Companies.v1
         public async Task<ActionResult<EmployeeDetail>> AddEmployeeToCompany(Guid companyId, AddEmployeeToCompanyRequest request)
         {
             var company = await _requestService.Execute(new GetCompany {Id = companyId});
-            var person = await _requestService.Execute(new GetPerson
+            if (company is null)
+            {
+                return NotFound();
+            }
+            var person = await _requestService.Execute(new GetOrCreatePerson
             {
                 TaxIdentificationNumber = request.TaxIdentificationNumber,
                 Name = new Name(request.EmployeeFirstName, request.EmployeeLastName)
@@ -118,8 +135,37 @@ namespace API.Controllers.Companies.v1
                 Company = companyId,
                 Employee = employeeId
             });
+            if (employee is null)
+            {
+                return NotFound();
+            }
             var employeeDetail = employee.ToDetail();
             return Ok(employeeDetail);
+        }
+
+        [HttpPost("{companyId}/employees/{employeeId}/dependents")]
+        [Produces(MediaTypeNames.Application.Json)]
+        public async Task<ActionResult<EmployeeDetail>> AddDependentToEmployee(Guid companyId, Guid employeeId, AddDependentToEmployeeRequest request)
+        {
+            var company = await _requestService.Execute(new GetCompany {Id = companyId});
+            if (company is null)
+            {
+                return NotFound();
+            }
+
+            var employee = company.Employees.FirstOrDefault(e => e.Id == employeeId);
+            if (employee is null)
+            {
+                return NotFound();
+            }
+            
+            var person = await _requestService.Execute(new GetOrCreatePerson
+            {
+                TaxIdentificationNumber = request.TaxIdentificationNumber,
+                Name = new Name(request.DependentFirstName, request.DependentLastName)
+            });
+            employee.AddDependent(person);
+            return Ok(employee);
         }
 
         /// <summary>
@@ -133,6 +179,10 @@ namespace API.Controllers.Companies.v1
         public async Task<ActionResult> RemoveEmployeeFromCompany(Guid companyId, Guid employeeId)
         {
             var company = await _requestService.Execute(new GetCompany {Id = companyId});
+            if (company is null)
+            {
+                return NotFound();
+            }
             company.RemoveEmployee(employeeId);
             return NoContent();
         }

@@ -5,6 +5,7 @@ using Domain.Entities.Dependents;
 using Domain.Entities.Employees;
 using Domain.Entities.People;
 using Domain.Enumerations;
+using Domain.Events.Companies;
 using Foundations.Core;
 
 namespace Domain.Entities.Companies
@@ -14,12 +15,13 @@ namespace Domain.Entities.Companies
         public string Name { get; private set; }
         public Duration PayPeriod { get; private set; }
         public IEnumerable<Employee> Employees => _directory.Values;
-        private Dictionary<Guid, Employee> _directory { get; set; }
+        private Dictionary<Guid, Employee> _directory { get; }
 
-        public Company(string name, int paychecksPerYear)
+        public Company(Guid id, string name, int paychecksPerYear, IEnumerable<Employee> employees) : base(id)
         {
             Name = name;
             PayPeriod = Enumeration.FromId<Duration>(paychecksPerYear);
+            _directory = employees.ToDictionary(employee => employee.Id, employee => employee);
         }
         
         public Employee AddEmployee(Person person)
@@ -27,10 +29,14 @@ namespace Domain.Entities.Companies
             var employee = _directory.Values.FirstOrDefault(e => e.Person != person);
             if (employee is null)
             {
-                employee = new Employee(person, new List<Dependent>());
+                employee = new Employee(Guid.NewGuid(), person, new List<Dependent>());
                 _directory.Add(employee.Id, employee);
                 
-                // Emit add employee event
+                PublishDomainEvent(new AddEmployeeEvent
+                {
+                    Company = Id,
+                    Employee = employee
+                });
                 
                 return employee;
             }
@@ -45,14 +51,20 @@ namespace Domain.Entities.Companies
             if (_directory.ContainsKey(employee))
             {
                 _directory.Remove(employee);
+                PublishDomainEvent(new RemoveEmployeeEvent
+                {
+                    Company = Id,
+                    Employee = employee
+                });
             }
-            
-            // Emit remove employee event
         }
 
         public void CloseCompany()
         {
-            // Emit close company event
+            PublishDomainEvent(new CloseCompanyEvent
+            {
+                Id = Id
+            });
         }
     }
 }

@@ -1,9 +1,9 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Domain.Entities.Companies;
 using Domain.Entities.Employees;
 using Infrastructure.Proxies.Companies.Requests;
-using Infrastructure.Repositories.Companies;
 using MediatR;
 
 namespace Infrastructure.Proxies.Companies.Handlers

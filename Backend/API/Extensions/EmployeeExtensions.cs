@@ -25,7 +25,7 @@ namespace API.Extensions
                 Id = employee.Id,
                 Name = employee.Person.Name.ToString(),
                 Deductions = benefitExpenses,
-                Dependents = employee.Dependents.Select(dependent => dependent.Person.ToString()),
+                Dependents = employee.Dependents.Select(dependent => dependent.ToSummary()),
                 NetPay = salary - benefitExpenses.Values.Sum(),
                 Salary = salary
             };

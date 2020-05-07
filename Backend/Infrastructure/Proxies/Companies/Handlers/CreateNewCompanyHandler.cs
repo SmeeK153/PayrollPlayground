@@ -2,7 +2,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Domain.Entities.Companies;
 using Infrastructure.Proxies.Companies.Requests;
-using Infrastructure.Repositories.Companies;
 using MediatR;
 
 namespace Infrastructure.Proxies.Companies.Handlers

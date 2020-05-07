@@ -4,7 +4,7 @@ using MediatR;
 
 namespace Infrastructure.Proxies.People.Requests
 {
-    public class GetPerson : IRequest<Person>
+    public class GetOrCreatePerson : IRequest<Person>
     {
         public Name Name { get; set; }
         public long TaxIdentificationNumber { get; set; }

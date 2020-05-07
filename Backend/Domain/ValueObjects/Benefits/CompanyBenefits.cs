@@ -17,7 +17,7 @@ namespace Domain.ValueObjects.Benefits
 
         public long CalculateCost()
         {
-            var amount = AmountInCents * Discounts.Aggregate(0.0, (totalDiscount, discount) => totalDiscount * discount.CalculateDiscount());
+            var amount = AmountInCents * Discounts.Aggregate(1.0, (totalDiscount, discount) => totalDiscount * discount.CalculateDiscount());
             return Convert.ToInt64(amount);
         }
     }
