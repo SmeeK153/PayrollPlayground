@@ -18,23 +18,6 @@ namespace Infrastructure.Repositories.Companies
         INotificationHandler<AddEmployeeDependent>,
         INotificationHandler<RemoveEmployeeDependent>
     {
-        // private static readonly InMemoryCompany TestCompany = new InMemoryCompany
-        // {
-        //     Id = Guid.NewGuid(),
-        //     Name = "Test Company",
-        //     PaycheckRate = 26,
-        //     Employees = { new InMemoryEmployee
-        //     {
-        //         Id = Guid.NewGuid(),
-        //         Person = new InMemoryPerson
-        //         {
-        //             Id = Guid.NewGuid(),
-        //             FirstName = "John",
-        //             LastName = "Doe"
-        //         }
-        //     } }
-        // };
-
         private static Dictionary<Guid, InMemoryCompany> _companyCatalog { get; } =
             new Dictionary<Guid, InMemoryCompany>();
         private static Dictionary<Guid, InMemoryEmployee> _employeeCatalog { get; } = 
