@@ -53,11 +53,12 @@ export default function Company() {
             ]
             Object.keys(data.deductions).forEach(key => {
                 items.push({
-                    description: key,
+                    description: `${key.substr(0,1).toUpperCase()}${key.substring(1)}`,
                     adjustment: data.deductions[key] * -1
                 });
             })
             setLineItems(items);
+            console.log(items, data);
         } else {
             setDependents([]);
             setLineItems({});

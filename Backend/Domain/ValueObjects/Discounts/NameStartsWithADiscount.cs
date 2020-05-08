@@ -16,6 +16,6 @@ namespace Domain.ValueObjects.Discounts
             yield return For;
         }
 
-        public override double CalculateDiscount() => (For.First.StartsWith("A") ? 0.9 : 1);
+        public override double CalculateDiscount() => (For.First.ToLower().StartsWith("a") ? 0.9 : 1);
     }
 }

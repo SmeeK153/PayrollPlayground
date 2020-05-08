@@ -23,15 +23,19 @@ const useStyles = makeStyles({
 
 export default function Company() {
     const [employees, setEmployees] = useState([]);
+    const [companyData, setCompanyData] = useState(null);
     let {company} = useParams();
     useEffect(() => {
-        LoadEmployees();
+        if (companyData === null){
+            LoadEmployees();
+        }
     });
 
     const LoadEmployees = async () => {
         const response = await Client.get(`v1/companies/${company}`);
         const data = response.data;
         if (!!data){
+            setCompanyData(data);
             setEmployees(data.employees);
         }
         else {
