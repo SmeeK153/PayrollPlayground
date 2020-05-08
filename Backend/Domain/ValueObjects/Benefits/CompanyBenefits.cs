@@ -9,10 +9,10 @@ namespace Domain.ValueObjects.Benefits
 {
     public abstract class CompanyBenefits : PeriodicPayment
     {
-        public IEnumerable<CompanyBenefitsDiscount> Discounts { get; } = new List<CompanyBenefitsDiscount>();
+        private List<CompanyBenefitsDiscount> Discounts { get; } = new List<CompanyBenefitsDiscount>();
         protected CompanyBenefits(long amountInCents, Person @for) : base(amountInCents, Duration.Annual)
         {
-            Discounts.Append(new NameStartsWithADiscount(@for.Name));
+            Discounts.Add(new NameStartsWithADiscount(@for.Name));
         }
 
         public long CalculateCost()
