@@ -40,6 +40,7 @@ namespace Infrastructure.Repositories.Companies
         {
             var inMemoryCompany = new InMemoryCompany
             {
+                Id = Guid.NewGuid(),
                 Name = name,
                 PaycheckRate = paychecksPerYear
             };

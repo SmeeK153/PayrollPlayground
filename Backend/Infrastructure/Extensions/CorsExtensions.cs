@@ -11,15 +11,16 @@ namespace Infrastructure.Extensions
             var corsConfiguration = configuration.GetSection("Cors").Get<CorsConfiguration>();
             services.AddCors(options =>
             {
-                options.AddPolicy("Default", builder =>
+                options.AddDefaultPolicy(builder =>
                 {
                     builder
-                        .AllowAnyHeader()
+                        .WithOrigins("http://localhost:3000")
                         .AllowAnyMethod()
-                        .AllowCredentials()
-                        .AllowAnyMethod();
-                    // .SetIsOriginAllowedToAllowWildcardSubdomains()
-                    // .WithOrigins(corsConfiguration.AllowedOrigins.ToArray());
+                        .AllowAnyHeader();
+                    // .AllowAnyHeader()
+                    // .AllowAnyMethod()
+                    // .AllowAnyMethod()
+
                 }); 
             });
 
