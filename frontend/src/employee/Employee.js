@@ -27,14 +27,16 @@ const useStyles = makeStyles({
 export default function Company() {
     const [dependents, setDependents] = useState([]);
     const [lineItems, setLineItems] = useState([]);
-    const [netPay, setNetPay] = useState(0);
+    const [netPay, setNetPay] = useState(null);
     let {company, employee} = useParams();
     const formatter = new Intl.NumberFormat('en-US',{
         style:'currency',
         currency:'USD'
     });
     useEffect(() => {
-        LoadEmployeeData();
+        if (netPay === null){
+            LoadEmployeeData();
+        }
     });
 
     const LoadEmployeeData = async () => {
